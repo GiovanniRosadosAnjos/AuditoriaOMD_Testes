@@ -1,0 +1,264 @@
+/* =========================================================
+   ISO 13485 – Relatório (layout com sidebar fixa à esquerda)
+   - Sidebar .float-stack (cards)
+   - Conteúdo ocupa todo o espaço restante
+   - Filtro sticky
+   - Modais (editor e regime)
+   ========================================================= */
+
+:root{
+  /* Cores */
+  --bg:#f4f6f8; --fg:#1f2328; --muted:#6b7280; --card:#ffffff; --line:#e5e7eb;
+  --brand:#1d4ed8; --brand-weak:#e0e7ff; --title:#111827;
+
+  /* Layout */
+  --sidebar-w: 285px;     /* largura dos cards */
+  --page-pad: 16px;       /* padding externo da página */
+  --gap: 16px;            /* espaço entre sidebar e conteúdo */
+  --content-pad: 16px;    /* padding interno nos cartões */
+}
+
+*{box-sizing:border-box}
+html,body{
+  margin:0; padding:0;
+  color:var(--fg); background:var(--bg);
+  font:14px/1.45 Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;
+}
+
+/* ======= CONTEÚDO (ocupa tudo à direita da sidebar) ======= */
+.container{
+  max-width: none;
+  width: calc(100% - (var(--sidebar-w) + var(--gap) + var(--page-pad) * 2));
+  margin-left: calc(var(--sidebar-w) + var(--gap) + var(--page-pad));
+  margin-right: var(--page-pad);
+  padding: 0 0 32px 0;
+}
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:var(--content-pad);
+}
+.visually-hidden{position:absolute;left:-9999px}
+
+/* ======= FILTRO (linha única + sticky) ======= */
+.filter-sticky{
+  position: sticky;
+  top: 16px;                  /* distância do topo */
+  z-index: 55;                /* acima da lista */
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px var(--content-pad);
+  box-shadow: 0 8px 24px rgba(0,0,0,.06);
+  margin-bottom: 12px;
+}
+.filter-sticky + .list{ border-top: none; }
+
+.filter-row{
+  display:flex; align-items:center; gap:10px;
+}
+.filter-row #filterText{
+  flex:1 1 auto; padding:10px; border:1px solid var(--line);
+  border-radius:8px; background:#fff;
+}
+.btn{
+  appearance:none; border:1px solid var(--brand);
+  background:var(--brand); color:#fff;
+  padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:600;
+}
+.btn.secondary{background:#fff;color:var(--brand)}
+.btn:active{transform:translateY(1px)}
+.total-pill{
+  display:inline-block; padding:6px 10px; border-radius:999px;
+  background:var(--brand-weak); color:var(--brand); font-weight:600;
+}
+
+/* ======= LISTA / ITENS ======= */
+.list{margin-top:14px;border-top:1px solid var(--line)}
+.section{padding:10px 0;border-bottom:1px solid var(--line)}
+.section .title{margin:0 0 4px;font-weight:700;color:var(--title)}
+.item{padding:10px 0;border-bottom:1px dashed var(--line)}
+.item:last-child{border-bottom:none}
+.item-title{font-weight:700}
+.item-observacao{margin-top:6px;color:var(--muted);font-size:12px}
+
+.item-row{display:flex;align-items:flex-start;gap:16px}
+.item-left{flex:0 1 38%;min-width:260px}
+.item-right{flex:1 1 auto;display:flex;justify-content:flex-start;align-items:flex-start;max-width:100%}
+
+/* Preview clicável */
+.resp-preview{
+  width:100%; max-width:100%; min-height:40px;
+  padding:10px 12px; border:1px solid var(--line); border-radius:8px;
+  background:#fff; cursor:pointer; overflow:auto; white-space:pre-wrap; line-height:1.4;
+}
+.resp-preview:hover{box-shadow:0 0 0 3px var(--brand-weak);border-color:var(--brand)}
+.resp-preview .placeholder{color:#9ca3af}
+.resp-preview ul{margin:0 0 0 1.25rem; padding:0}
+.resp-preview li{margin:0.2rem 0}
+
+/* ======= RODAPÉ ======= */
+.app-footer{border-top:1px solid var(--line);padding:14px 16px;text-align:center;color:var(--muted)}
+
+/* ======= SIDEBAR FIXA (cards) ======= */
+.float-stack{
+  position: fixed;
+  top: 40px;
+  left: var(--page-pad);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: var(--sidebar-w);
+}
+.float-title{
+  background:#f9fafb; border:1px solid var(--line); border-radius:12px;
+  padding:8px 12px; font-weight:800; pointer-events:auto;
+}
+.float-card{
+  background:#fff; border:1px solid var(--line); border-radius:12px;
+  box-shadow:0 8px 24px rgba(0,0,0,.12); pointer-events:auto;
+}
+.fc-header{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  padding:8px 12px; border-bottom:1px solid var(--line); font-weight:700;
+}
+.fc-body{ padding:10px 12px; font-size:13px; line-height:1.35; }
+.fc-body .muted{ color:var(--muted) }
+.link{ background:none; border:none; color:var(--brand); font-weight:600; cursor:pointer }
+
+/* ======= MODAIS (compartilhado) ======= */
+.modal-backdrop{
+  position:fixed; inset:0; background:rgba(0,0,0,.35);
+  display:flex; align-items:center; justify-content:center; z-index:70;
+}
+.modal{
+  width:80vw; max-width:1200px; background:#fff;
+  border-radius:12px; border:1px solid var(--line);
+  box-shadow:0 25px 80px rgba(0,0,0,.25);
+}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line)}
+.modal-title{font-weight:700}
+.modal-close{background:transparent;border:none;font-size:18px;cursor:pointer;line-height:1}
+.modal-body{padding:14px 16px;display:grid;gap:12px}
+.modal-label{font-weight:600}
+.modal-footer{padding:14px 16px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:10px}
+.hidden{display:none !important}
+
+/* ======= Modal: Editor ======= */
+.req-bloco{background:#f9fafb;border:1px solid var(--line);border-radius:10px;padding:12px}
+.req-texto{white-space:pre-wrap;color:#374151}
+.toolbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.toolbar .tb{appearance:none;border:1px solid var(--line);background:#fff;padding:6px 8px;border-radius:8px;cursor:pointer;font-weight:600}
+.toolbar .tb:hover{background:#f3f4f6}
+.color-group{display:flex;gap:6px}
+.color-btn{width:24px;height:24px;border-radius:4px;border:1px solid var(--line);cursor:pointer;padding:0;outline:none}
+.color-btn.red{background:#d32f2f}
+.color-btn.black{background:#000}
+.color-btn.blue{background:#1976d2}
+.color-btn:hover{box-shadow:0 0 0 2px var(--brand-weak)}
+.editor{min-height:120px;max-height:50vh;overflow:auto;border:1px solid var(--line);border-radius:8px;background:#fff;padding:10px 12px}
+.editor:focus{outline:3px solid var(--brand-weak)}
+
+/* ======= Modal: Regime (layout interno) ======= */
+.regime-grid{
+  display:grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+.rg-group{
+  background:#f9fafb;
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:12px;
+}
+.rg-title{ font-weight:700; margin-bottom:6px; }
+
+@media (min-width: 768px){
+  .regime-grid{ grid-template-columns: 1fr 1fr; }
+}
+
+/* ======= RESPONSIVO (laptops + mobile) ======= */
+@media (max-width: 1439px){
+  :root{ --content-pad: 14px; }
+  .item-left{ flex-basis: 40%; }
+}
+@media (max-width: 1279px){
+  .item-left{ flex-basis: 42%; }
+}
+@media (max-width: 980px){
+  .float-stack{
+    position: static; width: auto; left: auto; top: auto;
+    margin: 12px;
+  }
+  .container{
+    width: 100%;
+    margin: 0 12px 24px 12px;
+    padding: 0;
+  }
+  .filter-sticky{ top: 8px; margin: 8px 0 12px 0; border-radius:10px; padding:8px 10px; }
+  .item-row{flex-direction:column}
+  .item-left{flex-basis:auto; min-width:0}
+}
+@media (max-width: 768px){
+  html,body{font-size:13px}
+  .card{padding:12px}
+  .filter-row{gap:8px}
+  .total-pill{padding:5px 8px}
+}
+
+
+/* Radios do modal de regime em coluna */
+.rg-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 6px;
+}
+.rg-options label {
+  font-weight: normal;
+  cursor: pointer;
+}
+
+.hint {
+  display: block;       /* força a quebrar de linha */
+  margin-top: 6px;      /* espaço em cima */
+  font-size: 12px;      /* menor que o texto normal */
+  color: var(--muted);  /* cor cinza já usada */
+}
+
+
+/* ======= Modal Registro: layout em colunas (Requisito | Registro) ======= */
+.registro-grid{
+  display:grid;
+  grid-template-columns: 1fr 2fr; /* esquerda 33%, direita 67% */
+  gap:16px;
+  align-items:flex-start;
+}
+.registro-left,.registro-right{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.registro-left .req-texto{
+  background:#f9fafb;
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:10px 12px;
+  font-size:13px;
+  line-height:1.4;
+  max-height:50vh;
+  overflow:auto;
+}
+.registro-right .editor{
+  min-height:220px; /* visual confortável */
+}
+
+/* Responsivo: empilha colunas em telas menores */
+@media (max-width: 980px){
+  .registro-grid{ grid-template-columns: 1fr; }
+}
+
+
+

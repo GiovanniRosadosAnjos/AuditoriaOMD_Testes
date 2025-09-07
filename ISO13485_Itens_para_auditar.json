@@ -1,0 +1,118 @@
+[
+  {
+    "codigo": "4",
+    "item": "Sistemas de gestão da qualidade",
+    "OMD_AuditoriaInterna": false,
+    "TB1_Fabrica": false,
+    "TB2_Solicitante": false,
+    "Observacao": null,
+    "isTitulo": true
+  },
+  {
+    "codigo": "4.1",
+    "item": "Requisitos gerais",
+    "requisito_label": "xxxxx",
+    "requisito_texto": "Ex.: A organização deve estabelecer, documentar, implementar e manter um sistema de gestão da qualidade...",
+    "OMD_AuditoriaInterna": true,
+    "TB1_Fabrica": true,
+    "TB2_Solicitante": false,
+    "Observacao": null,
+    "isTitulo": false
+  },
+  {
+
+    
+  "codigo": "4.2.4",
+  "item": "Controle de Documentos",
+  "requisito_label": "xxxxx",
+  "requisito_texto": "A organização deve controlar os documentos internos e externos",
+  "OMD_AuditoriaInterna": true,
+  "TB1_Fabrica": true,
+  "TB2_Solicitante": true,
+  "Observacao": null,
+  "isTitulo": false,
+
+  "modelo_registro_html": "A organização possui o manual da qualidade (1) documentado.<br><br>----- Lista de Documentos Avaliados ---<br><b>Manual da Qualidade (1)</b><br><b>Título do Doc.:</b> _______<br><b>Código:</b> _______<br><b>Revisão:</b> _______<br><b>Emissão:</b> _______<br><small>(A partir de agora, abreviação: <b>MQ</b>)</small>",
+  "aplicar_modelo_quando_vazio": true
+
+
+
+
+
+  },
+  {
+    "codigo": "4.2.5",
+    "item": "Controle de Registros",
+    "requisito_label": "xxxxx",
+    "requisito_texto": "Ex.: Registros devem ser estabelecidos e mantidos para fornecer evidência da conformidade e da operação eficaz do SGQ...",
+    "OMD_AuditoriaInterna": true,
+    "TB1_Fabrica": true,
+    "TB2_Solicitante": true,
+    "Observacao": null,
+    "isTitulo": false
+  },
+  {
+    "codigo": "7",
+    "item": "Realização do produto",
+    "OMD_AuditoriaInterna": false,
+    "TB1_Fabrica": false,
+    "TB2_Solicitante": false,
+    "Observacao": null,
+    "isTitulo": true
+  },
+  {
+    "codigo": "7.1",
+    "item": "Planejamento da realização do produto",
+    "requisito_label": "xxxxx",
+    "requisito_texto": "Ex.: Planejar e desenvolver processos necessários para a realização do produto, coerentes com outros requisitos do SGQ...",
+    "OMD_AuditoriaInterna": true,
+    "TB1_Fabrica": true,
+    "TB2_Solicitante": false,
+    "Observacao": null,
+    "isTitulo": false
+  },
+  {
+    "codigo": "7.2.1",
+    "item": "Determinação de requisitos relacionados ao produto",
+    "requisito_label": "xxxxx",
+    "requisito_texto": "Ex.: Determinar requisitos especificados pelo cliente, legais e regulamentares aplicáveis...",
+    "OMD_AuditoriaInterna": true,
+    "TB1_Fabrica": true,
+    "TB2_Solicitante": false,
+    "Observacao": null,
+    "isTitulo": false
+  },
+  {
+    "codigo": "7.2.2",
+    "item": "Análise crítica dos requisitos relacionados ao produto",
+    "requisito_label": "xxxxx",
+    "requisito_texto": "Ex.: Realizar análise crítica para assegurar que requisitos do produto estejam definidos, conflitos resolvidos...",
+    "OMD_AuditoriaInterna": true,
+    "TB1_Fabrica": true,
+    "TB2_Solicitante": false,
+    "Observacao": null,
+    "isTitulo": false
+  },
+  {
+    "codigo": "7.2.3",
+    "item": "Comunicação",
+    "requisito_label": "xxxxx",
+    "requisito_texto": "Ex.: Determinar e implementar disposições eficazes para comunicação com clientes, incluindo feedback e reclamações...",
+    "OMD_AuditoriaInterna": true,
+    "TB1_Fabrica": false,
+    "TB2_Solicitante": true,
+    "Observacao": null,
+    "isTitulo": false
+  },
+  {
+    "codigo": "7.3",
+    "item": "Projeto e desenvolvimento",
+    "requisito_label": "xxxxx",
+    "requisito_texto": "Ex.: Planejar e controlar projeto e desenvolvimento de produto, entradas/saídas, verificações, validações...",
+    "OMD_AuditoriaInterna": true,
+    "TB1_Fabrica": true,
+    "TB2_Solicitante": false,
+    "Observacao": "Se a organização não realiza P&D → marcar N/A no escopo.",
+    "isTitulo": false
+  }
+]
