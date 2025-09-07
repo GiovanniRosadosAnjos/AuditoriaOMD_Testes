@@ -260,5 +260,13 @@ html,body{
   .registro-grid{ grid-template-columns: 1fr; }
 }
 
+/* ======= Ajustes para impressão ======= */
+@media print {
+  body { background: #fff; }
+  .float-stack, .filter-sticky, #btnPrint { display: none !important; }
+  .app-footer { display: none; }
+}
+
+
 
 
