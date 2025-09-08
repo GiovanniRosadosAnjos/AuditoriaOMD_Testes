@@ -364,3 +364,13 @@ html,body{
 }
 
 
+/* Botão perigoso */
+.btn.danger{
+  background:#C62828;           /* vermelho */
+  border:1px solid #C62828;
+  color:#fff;
+}
+.btn.danger:hover{ background:#B71C1C; }
+
+
+
