@@ -23,7 +23,8 @@
   container.innerHTML = `
     <div class="sf76-head">
       <button type="button" id="sf76Add" class="btn secondary">+ Dispositivo</button>
-      <button type="button" id="sf76Del" class="btn secondary">− Excluir último</button>
+      <button type="button" id="sf76Del" class="btn danger">− Excluir último</button>
+
     </div>
     <div class="sf76-table-wrap">
       <table class="sf76-table">

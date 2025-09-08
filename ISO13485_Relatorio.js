@@ -194,10 +194,19 @@ try{
   if (schema) {
     const tb = document.querySelector('.toolbar');
     if (tb) {
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'tb';
-      b.textContent = 'Registro estruturado';
+      
+      
+// evita botões duplicados em reaberturas do modal
+tb.querySelector('#btnStructured')?.remove();
+
+const b = document.createElement('button');
+b.type = 'button';
+b.className = 'tb';
+b.id = 'btnStructured';     // id fixo
+b.textContent = 'Registro estruturado';
+
+
+
 
 
   b.addEventListener('click', () => {
