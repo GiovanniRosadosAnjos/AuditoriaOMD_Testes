@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Relatório de Auditoria – NBR ISO 13485:2016</title>
+  <link rel="stylesheet" href="ISO13485_Relatorio.css" />
+  <script src="ISO13485_Relatorio.js" defer></script>
+  <script src="ISO13485_Print.js" defer></script>
+  <script src="ISO13485_SubForms.js" defer></script>
+  <script src="ISO13485_7_6.js" defer></script>
+
+
+
+
+</head>
+<body>
+  <!-- Área de trabalho: filtro + lista -->
+  <main class="container">
+    <section class="card">
+      <!-- Linha única do filtro -->
+      <h3 class="visually-hidden">Filtro</h3>
+      
+      
+<div class="filter-sticky">
+  <div class="filter-row">
+    <input type="text" id="filterText" placeholder="Para buscar, digite: 4.2.4 ou 424 ou Controle de Documentos" />
+    <button id="btnClear" class="btn secondary">Limpar</button>
+    <div id="total" class="total-pill">0 itens</div>
+  </div>
+</div>
+
+
+
+
+
+      <!-- Lista de itens -->
+      <div id="itemsList" class="list"></div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <small>The facilitis company – Copyright 2025</small>
+  </footer>
+
+  <!-- ===== Coluna de cards flutuantes (à direita) ===== -->
+  <div class="float-stack" aria-live="polite">
+    <div class="float-title">Relatório de Auditoria</div>
+
+    <!-- Card 1: Fábrica -->
+    <div class="float-card">
+      <div class="fc-header">Fábrica</div>
+      <div class="fc-body">
+        <div><span class="muted">Auditada:</span> <b id="factoryName">xxxxxxxxx</b></div>
+      </div>
+    </div>
+
+    <!-- Card 2: Regime -->
+    <div class="float-card">
+      <div class="fc-header">
+        <span>Regime</span>
+        <button id="btnChangeRegime" class="link">Alterar</button>
+      </div>
+      <div id="regimeFloatText" class="fc-body"></div>
+    </div>
+
+    <!-- Card 3: Não conformidade -->
+    <div class="float-card" id="ncCard">
+      <div class="fc-header">Não conformidade</div>
+      <div class="fc-body" id="ncBody">
+        <span class="muted">Nenhuma NC registrada.</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Modal: Selecionar Regime -->
+<div id="regimeModalBackdrop" class="modal-backdrop hidden" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="regimeModalTitle">
+    <div class="modal-header">
+      <div id="regimeModalTitle" class="modal-title">Selecionar regime (Tipo de Auditoria)</div>
+      <button class="modal-close" id="regimeModalClose" aria-label="Fechar">&times;</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="regime-grid">
+
+        
+
+<div class="rg-group">
+ 
+  <div class="rg-options">
+    <label><input type="radio" name="regime" value="omd"> Auditoria OMD</label>
+    <label><input type="radio" name="regime" value="interna"> Auditoria OMD interna</label>
+    <label><input type="radio" name="regime" value="medical"> Auditoria Medical – Portaria Inmetro n.º 384:2020</label>
+  </div>
+</div>
+
+
+
+
+        <div id="subLocal" class="rg-group hidden">
+          <div class="rg-title">Local (Portaria 384/2020)</div>
+          <label class="line"><input type="checkbox" id="chkFabrica"> Auditoria de Fábrica</label>
+          <label class="line"><input type="checkbox" id="chkSolicitante"> Auditoria do Solicitante</label> 
+          <small class="hint">Pode marcar uma ou ambas (união dos itens).</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button id="regimeModalCancel" class="btn secondary">Cancelar</button>
+      <button id="regimeModalOk" class="btn">Aplicar</button>
+    </div>
+  </div>
+</div>
+
+  
+  
+
+  
+
+  <!-- ===== Modal registro ===== -->
+  <div id="modalBackdrop" class="modal-backdrop hidden" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-header">
+        <div class="modal-title" id="modalTitle">Título</div>
+        <button class="modal-close" id="modalClose" aria-label="Fechar">&times;</button>
+      </div>
+
+
+
+     <div class="modal-body">
+  <div class="registro-grid">
+    <!-- Coluna ESQUERDA: REQUISITO -->
+    <div class="registro-left">
+      <div class="modal-label">Requisito</div>
+      <div id="reqTexto" class="req-texto"></div>
+    </div>
+
+    <!-- Coluna DIREITA: REGISTRO -->
+    <div class="registro-right">
+      <div class="modal-label">Registro</div>
+
+      <!-- Toolbar -->
+      <div class="toolbar" role="toolbar" aria-label="Ferramentas do editor">
+        <button type="button" class="tb" data-cmd="bold"><b>B</b></button>
+        <button type="button" class="tb" data-cmd="italic"><i>I</i></button>
+        <button type="button" class="tb" data-cmd="underline"><u>U</u></button>
+        <button type="button" class="tb" data-cmd="insertUnorderedList">• List</button>
+        <button type="button" class="tb" data-cmd="insertOrderedList">1. List</button>
+        <button type="button" id="btnLink" class="tb">Link</button>
+        <div class="color-group">
+          <button type="button" class="color-btn red"   data-color="#d32f2f" title="Vermelho"></button>
+          <button type="button" class="color-btn black" data-color="#000000" title="Preto"></button>
+          <button type="button" class="color-btn blue"  data-color="#1976d2" title="Azul"></button>
+        </div>
+        <label class="tb">Marca <input type="color" id="hilitePicker" value="#ffff88"></label>
+        <button type="button" class="tb" id="btnClearFormat">Limpar</button>
+      </div>
+
+      <!-- Editor -->
+      <div id="modalEditor" class="editor" contenteditable="true"></div>
+
+      <!-- Resultado (radios) -->
+      <div class="modal-fieldset" style="margin-top:10px">
+        <span class="modal-label">Resultado</span>
+        <label class="radio"><input type="radio" name="modalStatus" value="C"> Conforme</label>
+        <label class="radio" style="margin-left:12px"><input type="radio" name="modalStatus" value="NC"> Não conforme</label>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+      <div class="modal-footer">
+        <button id="modalCancel" class="btn secondary">Cancelar</button>
+        <button id="modalOk" class="btn">Concluir</button>
+      </div>
+    </div>
+  </div> <!-- ===== fim do MODAL registro ===== -->
+
+
+
+
+<!-- Sub-Modal: Registro Estruturado (genérico, guiado por schema do JSON) -->
+<div id="subFormBackdrop" class="modal-backdrop hidden" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="subFormTitle">
+    <div class="modal-header">
+      <div id="subFormTitle" class="modal-title">Registro estruturado</div>
+      <button class="modal-close" id="subFormClose" aria-label="Fechar">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="subForm" class="form-grid"></form>
+    </div>
+    <div class="modal-footer">
+      <button id="subFormCancel" class="btn secondary">Cancelar</button>
+      <button id="subFormOk" class="btn">Aplicar</button>
+    </div>
+  </div>
+</div>
+
+
+
+
+</body>
+</html>

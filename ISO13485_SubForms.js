@@ -1,120 +1,150 @@
 /* =========================================================
-   SubForms dinâmicos (para requisitos com form_schema no JSON)
-   - window.SubForms.openSubForm(schema, codigo, onApply)
-   - window.SubForms.buildHtmlFromSchema(schema, data)
-   - Renderers específicos por requisito (ex.: 7.6)
+   SubForms Core
+   - Mantém um registro de plugins por código (ex.: '7.6').
+   - Abre o submodal, delega render/collect/HTML ao plugin.
+   - Se não houver plugin, usa um fallback genérico (schema.fields).
+   API exposta em window.SubForms:
+     - register(code, { render(container,schema), collect(container,schema), toHtml(schema,data) })
+     - open(code, schema, onApply)
+     - buildHtmlFromSchema(schema, data)  (fallback)
    ========================================================= */
+(function () {
+  const plugins = new Map(); // code -> { render, collect, toHtml }
 
-(function(){
-  const api = {};
+  /* ---------- Registro de plugins ---------- */
+  function register(code, handlers) {
+    if (!code) return;
+    plugins.set(code, handlers || {});
+  }
 
-  /** Abre o sub-modal com base no schema vindo do JSON */
-  api.openSubForm = function(schema, codigo, onApply){
-    const bd   = document.getElementById('subFormBackdrop');
-    const form = document.getElementById('subForm');
-    const title= document.getElementById('subFormTitle');
-    if (!bd || !form) return;
+  /* ---------- Fallback: render e coleta genéricos por schema.fields ---------- */
+  function renderGenericForm(container, schema) {
+    const fields = Array.isArray(schema?.fields) ? schema.fields : [];
+    container.classList.add('form-grid');
+    container.innerHTML = fields.map(f => `
+      <div>
+        <label style="font-weight:600;display:block;margin-bottom:4px" for="sf_${f.id}">
+          ${f.label || f.id}${f.required ? ' *' : ''}
+        </label>
+        ${inputFor(f)}
+      </div>
+    `).join('');
+  }
 
-    title.textContent = schema.title || 'Registro estruturado';
+  function inputFor(f) {
+    const type = (f.type === 'date' || f.type === 'number' || f.type === 'text') ? f.type : 'text';
+    const ph = f.placeholder ? ` placeholder="${escapeHtml(f.placeholder)}"` : '';
+    if (f.type === 'select' && Array.isArray(f.options)) {
+      return `
+        <select id="sf_${f.id}" ${f.required ? 'required' : ''}>
+          ${f.options.map(o => `<option value="${escapeHtml(o)}">${escapeHtml(o)}</option>`).join('')}
+        </select>`;
+    }
+    return `<input id="sf_${f.id}" type="${type}" ${f.required ? 'required' : ''}${ph}>`;
+  }
 
-    // monta campos
-    form.innerHTML = '';
-    (schema.fields || []).forEach(f=>{
-      const wrap = document.createElement('div');
-
-      const lab = document.createElement('label');
-      lab.textContent = f.label || f.id;
-      lab.setAttribute('for', `sf_${f.id}`);
-
-      let input;
-      if (f.type === 'select') {
-        input = document.createElement('select');
-        (f.options || []).forEach(opt=>{
-          const o = document.createElement('option');
-          o.value = opt; o.textContent = opt; input.appendChild(o);
-        });
-      } else {
-        input = document.createElement('input');
-        input.type = (f.type === 'date' || f.type === 'text') ? f.type : 'text';
-        if (f.placeholder) input.placeholder = f.placeholder;
-      }
-      input.id = `sf_${f.id}`;
-      input.required = !!f.required;
-
-      wrap.appendChild(lab);
-      wrap.appendChild(input);
-      form.appendChild(wrap);
+  function collectGenericForm(container, schema) {
+    const out = {};
+    const fields = Array.isArray(schema?.fields) ? schema.fields : [];
+    let ok = true, firstInvalid = null;
+    fields.forEach(f => {
+      const el = container.querySelector(`#sf_${CSS.escape(f.id)}`);
+      const val = (el?.value || '').trim();
+      if (f.required && !val) { ok = false; if (!firstInvalid) firstInvalid = el; }
+      out[f.id] = val;
     });
+    if (!ok) {
+      alert('Preencha os campos obrigatórios.');
+      firstInvalid?.focus();
+      return false;
+    }
+    return out;
+  }
 
-    function close(){
+  function buildHtmlFromSchema(schema, data) {
+    const fields = Array.isArray(schema?.fields) ? schema.fields : [];
+    const rows = fields.map(f => {
+      const v = data?.[f.id];
+      if (!v) return '';
+      return `<li><b>${escapeHtml(f.label || f.id)}:</b> ${escapeHtml(v)}</li>`;
+    }).filter(Boolean).join('');
+    return `
+      <div class="req-bloco">
+        <b>${escapeHtml(schema?.title || 'Registro estruturado')}</b>
+        <ul>${rows}</ul>
+      </div>`;
+  }
+
+  /* ---------- Util ---------- */
+  function escapeHtml(s) {
+    return (s ?? '').toString().replace(/[&<>"]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m]));
+  }
+
+  /* ---------- Abrir submodal ---------- */
+  function open(code, schema, onApply) {
+    const bd    = document.getElementById('subFormBackdrop');
+    const title = document.getElementById('subFormTitle');
+    const box   = document.getElementById('subForm'); // container onde o plugin renderiza
+    if (!bd || !title || !box) return;
+
+    title.textContent = schema?.title || 'Registro estruturado';
+    box.className = '';   // remove classes anteriores (plugin decide layout)
+    box.innerHTML = '';   // limpa
+
+    const plugin = plugins.get(code);
+
+    // Render
+    if (plugin && typeof plugin.render === 'function') {
+      plugin.render(box, schema);
+    } else {
+      // fallback genérico
+      renderGenericForm(box, schema);
+    }
+
+    // Fechamento
+    function close() {
       bd.classList.add('hidden');
       document.getElementById('subFormOk').onclick = null;
       document.getElementById('subFormCancel').onclick = null;
       document.getElementById('subFormClose').onclick = null;
     }
 
-    document.getElementById('subFormOk').onclick = ()=>{
-      const data = {};
-      let ok = true;
-      (schema.fields || []).forEach(f=>{
-        const el = document.getElementById(`sf_${f.id}`);
-        const val = (el?.value || '').trim();
-        if (f.required && !val) ok = false;
-        data[f.id] = val;
-      });
-      if (!ok){ alert('Preencha os campos obrigatórios.'); return; }
+    // OK
+    document.getElementById('subFormOk').onclick = () => {
+      let data;
+      if (plugin && typeof plugin.collect === 'function') {
+        data = plugin.collect(box, schema);
+      } else {
+        data = collectGenericForm(box, schema);
+      }
+      if (data === false) return; // inválido, plugin bloqueou
 
-      onApply?.(data);
+      const html = (plugin && typeof plugin.toHtml === 'function')
+        ? plugin.toHtml(schema, data)
+        : buildHtmlFromSchema(schema, data);
+
+      onApply?.(data, html);
       close();
     };
+
+    // Cancel / Close
     document.getElementById('subFormCancel').onclick = close;
-    document.getElementById('subFormClose').onclick = close;
+    document.getElementById('subFormClose').onclick  = close;
 
     bd.classList.remove('hidden');
-  };
+  }
 
-  /** HTML padrão (fallback) para qualquer schema */
-  api.buildHtmlFromSchema = function(schema, d){
-    const rows = (schema.fields || []).map(f=>{
-      const val = d[f.id];
-      if (!val) return '';
-      return `<li><b>${f.label || f.id}:</b> ${val}</li>`;
-    }).filter(Boolean).join('');
-    return `
-      <div class="req-bloco">
-        <b>${schema.title || 'Registro estruturado'}</b>
-        <ul>${rows}</ul>
-      </div>`;
-  };
+  /* ---------- Compat: manter nomes antigos se houver ---------- */
+  function openSubForm(schema, code, onApplyOld) {
+    // assinatura antiga: (schema, codigo, callback(data))
+    open(code, schema, (data, html) => onApplyOld?.(data, html));
+  }
 
-  /** Renderers específicos por requisito (ex.: “7.6”) */
-  const renderers = {
-    '7.6': function(schema, d){
-      return `
-        <div class="req-bloco">
-          <b>${schema.title || 'Registro de Calibração do Dispositivo'}</b>
-          <ul>
-            ${d.nome ? `<li><b>Dispositivo:</b> ${d.nome}${d.modelo ? ' – '+d.modelo : ''}${d.serie ? ' (S/N '+d.serie+')' : ''}</li>`:''}
-            ${d.cert ? `<li><b>Certificado:</b> ${d.cert}</li>`:''}
-            ${d.lab ? `<li><b>Laboratório:</b> ${d.lab}</li>`:''}
-            ${d.rastreab ? `<li><b>Rastreabilidade:</b> ${d.rastreab}</li>`:''}
-            ${d.faixa ? `<li><b>Faixa/Grandeza:</b> ${d.faixa}</li>`:''}
-            ${d.incerteza ? `<li><b>Incerteza:</b> ${d.incerteza}</li>`:''}
-            ${d.data_cal ? `<li><b>Data calibração:</b> ${d.data_cal}</li>`:''}
-            ${d.validade ? `<li><b>Validade:</b> ${d.validade}</li>`:''}
-            ${d.situacao ? `<li><b>Situação:</b> ${d.situacao}</li>`:''}
-          </ul>
-        </div>`;
-    }
+  // Expondo API
+  window.SubForms = {
+    register,
+    open,
+    openSubForm,              // compat
+    buildHtmlFromSchema       // útil para plugins
   };
-
-  /** Decide qual HTML usar (específico por código, senão fallback) */
-  api.renderHtml = function(codigo, schema, data){
-    const fn = renderers[codigo];
-    return (typeof fn === 'function')
-      ? fn(schema, data)
-      : api.buildHtmlFromSchema(schema, data);
-  };
-
-  window.SubForms = api;
 })();

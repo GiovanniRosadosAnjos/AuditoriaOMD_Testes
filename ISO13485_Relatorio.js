@@ -198,20 +198,24 @@ try{
       b.type = 'button';
       b.className = 'tb';
       b.textContent = 'Registro estruturado';
-      b.addEventListener('click', () => {
-        window.SubForms?.openSubForm(schema, context.codigo, (data) => {
-          // Gera o HTML específico (ou genérico) e injeta no editor
-          const html = window.SubForms.renderHtml(context.codigo, schema, data);
-          const editor = document.getElementById('modalEditor');
-          if (editor) {
-            if (!editor.innerHTML.trim()) editor.innerHTML = html;
-            else editor.innerHTML += '<hr>' + html;
-          }
-          // opcional: guardar os dados estruturados juntos
-          const cur = answers.get(context.codigo) || {};
-          answers.set(context.codigo, { ...cur, structured: data });
-        });
-      });
+
+
+  b.addEventListener('click', () => {
+  // chama o CORE para abrir o submodal do plugin do código (ex.: '7.6')
+  window.SubForms?.open(context.codigo, schema, (data, html) => {
+    const editor = document.getElementById('modalEditor');
+    if (editor) {
+      if (!editor.innerHTML.trim()) editor.innerHTML = html;
+      else editor.innerHTML += '<hr>' + html;
+    }
+    const cur = answers.get(context.codigo) || {};
+    answers.set(context.codigo, { ...cur, structured: data });
+  });
+});
+
+
+
+
       tb.appendChild(b);
     }
   }

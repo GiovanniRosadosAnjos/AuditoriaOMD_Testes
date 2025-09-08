@@ -317,3 +317,50 @@ html,body{
   .form-grid{ grid-template-columns: 1fr; }
 }
 
+
+/* ======= Submodal 7.6 – Tabela por colunas ======= */
+.sf76-head{
+  display:flex;
+  justify-content:flex-end;
+  margin-bottom:8px;
+}
+.sf76-table-wrap{
+  overflow-x:auto;
+}
+.sf76-table{
+  border-collapse:collapse;
+  width:100%;
+  min-width:720px;
+  background:#fff;
+}
+.sf76-table th,
+.sf76-table td{
+  border:1px solid var(--line);
+  padding:8px;
+  vertical-align:top;
+}
+.sf76-table thead th{
+  background:#f3f4f6;
+  font-weight:700;
+  text-align:center;
+}
+.sf76-table td.desc{
+  background:#f9fafb;
+  font-weight:600;
+  width:38%;
+}
+.sf76-table .sf76-inp{
+  width:100%;
+  padding:6px 8px;
+  border:1px solid var(--line);
+  border-radius:6px;
+  background:#fff;
+}
+@media print {
+  .sf76-table.printable th,
+  .sf76-table.printable td {
+    border-color:#bbb;
+  }
+}
+
+
