@@ -9,12 +9,18 @@ document.addEventListener("DOMContentLoaded", () => {
   btn.textContent = "Imprimir PDF";
   btn.className = "btn";
 
-  // Onde inserir (footer)
-  const footer = document.querySelector(".app-footer");
-  if (footer) {
-    footer.appendChild(document.createElement("br"));
-    footer.appendChild(btn);
-  }
+  
+  
+// Onde inserir (embaixo dos cards)
+const floatStack = document.querySelector(".float-stack");
+if (floatStack) {
+  const wrapper = document.createElement("div");
+  wrapper.style.marginTop = "10px";
+  wrapper.appendChild(btn);
+  floatStack.appendChild(wrapper);
+}
+
+
 
   // Ação do botão
   btn.addEventListener("click", () => {

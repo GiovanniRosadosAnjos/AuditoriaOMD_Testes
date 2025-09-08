@@ -90,10 +90,37 @@ function buildTooltip(it){
   if (it.TB2_Solicitante)      tags.push('Solicitante');
   return tags.length ? `Aplicável: ${tags.join(' · ')}` : 'Sem mapeamento de aplicabilidade';
 }
-function matchesText(it,t){
+
+
+
+function matchesText(it, t){
   if (!t) return true;
-  return `${it.codigo||''} ${it.item||''}`.toLowerCase().includes(t);
+
+  // normalizações
+  const q = (t || '').toString().toLowerCase().trim();
+  const qDigits = q.replace(/\D/g, ''); // só números do que o usuário digitou
+
+  const codigo = (it.codigo || '');
+  const item   = (it.item   || '');
+  const hay    = `${codigo} ${item}`.toLowerCase();
+  const codigoDigits = codigo.replace(/\D/g, ''); // só números do código do requisito
+
+  // 1) match textual "como já era"
+  if (hay.includes(q)) return true;
+
+  // 2) match numérico: permite 424 ↔ 4.2.4, 753 ↔ 7.5.3 etc.
+  if (qDigits && codigoDigits.includes(qDigits)) return true;
+
+  return false;
 }
+
+
+
+
+
+
+
+
 function visibleByRegime(it){
   if (it.isTitulo) return true;
   const regime = readRegime();
@@ -151,15 +178,56 @@ function openModal(context, onDone){
   const closeBtn = document.getElementById('modalClose');
   const okBtn    = document.getElementById('modalOk');
   const cancelBtn= document.getElementById('modalCancel');
-
-
-
-
+  const schema = (window.__ISO_ITEMS || []).find(x => x.codigo === context.codigo)?.form_schema; // Checa se há schema no JSON para este código
 
 
   titleEl.textContent = `${context.codigo ?? ''} – ${context.descricao ?? ''}`;
   reqTexto.textContent = context.reqTexto ?? '';
   editor.innerHTML = context.htmlAtual || '';
+
+
+ 
+
+// --- Botão "Registro estruturado" quando houver form_schema no JSON ---
+try{
+  const schema = (window.__ISO_ITEMS || []).find(x => x.codigo === context.codigo)?.form_schema;
+  if (schema) {
+    const tb = document.querySelector('.toolbar');
+    if (tb) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'tb';
+      b.textContent = 'Registro estruturado';
+      b.addEventListener('click', () => {
+        window.SubForms?.openSubForm(schema, context.codigo, (data) => {
+          // Gera o HTML específico (ou genérico) e injeta no editor
+          const html = window.SubForms.renderHtml(context.codigo, schema, data);
+          const editor = document.getElementById('modalEditor');
+          if (editor) {
+            if (!editor.innerHTML.trim()) editor.innerHTML = html;
+            else editor.innerHTML += '<hr>' + html;
+          }
+          // opcional: guardar os dados estruturados juntos
+          const cur = answers.get(context.codigo) || {};
+          answers.set(context.codigo, { ...cur, structured: data });
+        });
+      });
+      tb.appendChild(b);
+    }
+  }
+}catch(e){ console.warn('SubForms não aplicado:', e); }
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Pré-preencher com modelo do JSON quando não houver registro prévio
 try{

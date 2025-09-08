@@ -7,6 +7,11 @@
   <link rel="stylesheet" href="ISO13485_Relatorio.css" />
   <script src="ISO13485_Relatorio.js" defer></script>
   <script src="ISO13485_Print.js" defer></script>
+  <script src="ISO13485_SubForms.js" defer></script>
+
+
+
+
 </head>
 <body>
   <!-- Área de trabalho: filtro + lista -->
@@ -18,7 +23,7 @@
       
 <div class="filter-sticky">
   <div class="filter-row">
-    <input type="text" id="filterText" placeholder="Filtrar por código ou descrição..." />
+    <input type="text" id="filterText" placeholder="Para buscar, digite: 4.2.4 ou 424 ou Controle de Documentos" />
     <button id="btnClear" class="btn secondary">Limpar</button>
     <div id="total" class="total-pill">0 itens</div>
   </div>
@@ -174,6 +179,54 @@
         <button id="modalOk" class="btn">Concluir</button>
       </div>
     </div>
+  </div> <!-- ===== fim do MODAL registro ===== -->
+
+
+
+  <!-- Sub-Modal: Registro Estruturado (genérico p/ schema do JSON) -->
+<div id="subFormBackdrop" class="modal-backdrop hidden" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="subFormTitle">
+    <div class="modal-header">
+      <div id="subFormTitle" class="modal-title">Registro estruturado</div>
+      <button class="modal-close" id="subFormClose" aria-label="Fechar">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="subForm" class="form-grid"></form>
+    </div>
+    <div class="modal-footer">
+      <button id="subFormCancel" class="btn secondary">Cancelar</button>
+      <button id="subFormOk" class="btn">Aplicar</button>
+    </div>
   </div>
+</div>
+
+
+<!-- Sub-Modal: Registro Estruturado (genérico, guiado por schema do JSON) -->
+<div id="subFormBackdrop" class="modal-backdrop hidden" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="subFormTitle">
+    <div class="modal-header">
+      <div id="subFormTitle" class="modal-title">Registro estruturado</div>
+      <button class="modal-close" id="subFormClose" aria-label="Fechar">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="subForm" class="form-grid"></form>
+    </div>
+    <div class="modal-footer">
+      <button id="subFormCancel" class="btn secondary">Cancelar</button>
+      <button id="subFormOk" class="btn">Aplicar</button>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
 </body>
 </html>

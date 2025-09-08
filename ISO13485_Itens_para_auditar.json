@@ -114,5 +114,47 @@
     "TB2_Solicitante": false,
     "Observacao": "Se a organização não realiza P&D → marcar N/A no escopo.",
     "isTitulo": false
+  },
+
+
+
+
+{
+  "codigo": "7.6",
+  "item": "Controle de dispositivos de medição e monitoramento",
+  "requisito_label": "7.6",
+  "requisito_texto": "A organização deve determinar os dispositivos de monitoramento e medição aplicáveis e fornecer evidência de que estes são calibrados/verificados conforme requisitos especificados...",
+  "OMD_AuditoriaInterna": true,
+  "TB1_Fabrica": true,
+  "TB2_Solicitante": true,
+  "Observacao": "Registre dispositivo(s) usado(s) nesta auditoria.",
+  "isTitulo": false,
+
+  "form_schema": {
+    "title": "Registro de Calibração do Dispositivo",
+    "fields": [
+      {"id":"nome","label":"Dispositivo (ex.: Multímetro)","type":"text","required":true},
+      {"id":"modelo","label":"Modelo","type":"text","required":false},
+      {"id":"serie","label":"Nº de Série","type":"text","required":false},
+      {"id":"cert","label":"Nº Certificado de Calibração","type":"text","required":true},
+      {"id":"lab","label":"Laboratório","type":"text","required":true},
+      {"id":"rastreab","label":"Rastreabilidade (padrão/INMETRO)","type":"text","required":true},
+      {"id":"faixa","label":"Faixa/Grandeza","type":"text","required":false},
+      {"id":"incerteza","label":"Incerteza (k=2)","type":"text","required":false},
+      {"id":"data_cal","label":"Data da Calibração","type":"date","required":true},
+      {"id":"validade","label":"Validade/Próx. Calibração","type":"date","required":true},
+      {"id":"situacao","label":"Situação no momento da auditoria","type":"select","required":true,
+        "options":["Dentro do prazo","Vencido","Em análise (aceitação metrológica)"]}
+    ]
   }
+}
+
+
+
+
+
+
+
+
+
 ]
