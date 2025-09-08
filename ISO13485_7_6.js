@@ -20,41 +20,81 @@
   }
 
   function render(container){
-    container.innerHTML = `
-      <div class="sf76-head">
-        <button type="button" id="sf76Add" class="btn secondary">+ Dispositivo</button>
-      </div>
-      <div class="sf76-table-wrap">
-        <table class="sf76-table">
-          <thead><tr><th>Descrição</th><th data-col="1">1</th></tr></thead>
-          <tbody>
-            ${ROWS.map(r => `
-              <tr data-row="${r.id}">
-                <td class="desc">${r.label}</td>
-                <td data-col="1">${inputFor(r, '1')}</td>
-              </tr>`).join('')}
-          </tbody>
-        </table>
-      </div>
-    `;
-    let colCount = 1;
-    container.querySelector('#sf76Add').addEventListener('click', ()=>{
-      colCount++;
-      // TH
-      const th = document.createElement('th');
-      th.setAttribute('data-col', String(colCount));
-      th.textContent = String(colCount);
-      container.querySelector('.sf76-table thead tr').appendChild(th);
-      // TDs
-      ROWS.forEach(r=>{
-        const tr = container.querySelector(`tr[data-row="${r.id}"]`);
-        const td = document.createElement('td');
-        td.setAttribute('data-col', String(colCount));
-        td.innerHTML = inputFor(r, String(colCount));
-        tr.appendChild(td);
-      });
+  container.innerHTML = `
+    <div class="sf76-head">
+      <button type="button" id="sf76Add" class="btn secondary">+ Dispositivo</button>
+      <button type="button" id="sf76Del" class="btn secondary">− Excluir último</button>
+    </div>
+    <div class="sf76-table-wrap">
+      <table class="sf76-table">
+        <thead><tr><th>Descrição</th><th data-col="1">1</th></tr></thead>
+        <tbody>
+          ${ROWS.map(r => `
+            <tr data-row="${r.id}">
+              <td class="desc">${r.label}</td>
+              <td data-col="1">${inputFor(r, '1')}</td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  let colCount = 1;
+
+  // + Dispositivo (adiciona coluna)
+  container.querySelector('#sf76Add').addEventListener('click', ()=>{
+    colCount++;
+    // TH
+    const th = document.createElement('th');
+    th.setAttribute('data-col', String(colCount));
+    th.textContent = String(colCount);
+    container.querySelector('.sf76-table thead tr').appendChild(th);
+    // TDs
+    ROWS.forEach(r=>{
+      const tr = container.querySelector(`tr[data-row="${r.id}"]`);
+      const td = document.createElement('td');
+      td.setAttribute('data-col', String(colCount));
+      td.innerHTML = inputFor(r, String(colCount));
+      tr.appendChild(td);
     });
-  }
+  });
+
+  // − Excluir último (remove a última coluna)
+  container.querySelector('#sf76Del').addEventListener('click', ()=>{
+    if (colCount <= 1){
+      alert('Precisa existir pelo menos 1 dispositivo.');
+      return;
+    }
+
+    // confirmação se houver dados na última coluna
+    const hasData = ROWS.some(r=>{
+      const el = container.querySelector(`[name="c${colCount}_${r.id}"]`);
+      return el && el.value.trim();
+    });
+    if (hasData && !confirm(`Excluir a coluna ${colCount}? Os dados dessa coluna serão perdidos.`)){
+      return;
+    }
+
+    // remove TH da última coluna
+    const lastTh = container.querySelector(`.sf76-table thead th[data-col="${colCount}"]`);
+    lastTh?.remove();
+
+    // remove TD de cada linha para a última coluna
+    ROWS.forEach(r=>{
+      const td = container.querySelector(`tr[data-row="${r.id}"] td[data-col="${colCount}"]`);
+      td?.remove();
+    });
+
+    colCount--;
+  });
+}
+
+
+
+
+
+
+
 
   function collect(container){
     const head = container.querySelectorAll('.sf76-table thead th[data-col]');
